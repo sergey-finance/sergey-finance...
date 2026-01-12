@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансовый помощник школьника</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Общие стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Шапка */
+        header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        header i {
+            margin-right: 15px;
+            color: #4cd964;
+        }
+
+        /* Навигация */
+        nav {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 20px 25px;
+            text-decoration: none;
+            color: #555;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: #2c3e50;
+            background-color: #f8f9fa;
+        }
+
+        .nav-link.active {
+            color: #4a6491;
+            border-bottom-color: #4a6491;
+        }
+
+        .nav-link i {
+            margin-right: 8px;
+        }
+
+        /* Основной контент */
+        main {
+            padding: 40px 0;
+        }
+
+        .module {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .module.active-module {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-family: 'Roboto', sans-serif;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 2rem;
+            border-left: 5px solid #4a6491;
+            padding-left: 15px;
+        }
+
+        h2 i {
+            margin-right: 10px;
+            color: #4a6491;
+        }
+
+        .module-description {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            max-width: 800px;
+        }
+
+        /* Калькулятор */
+        .calculator-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .input-field {
+            margin-bottom: 10px;
+        }
+
+        .input-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            font-size: 1.1rem;
+        }
+
+        .input-field label i {
+            margin-right: 8px;
+            color: #4a6491;
+            width: 20px;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: #4a6491;
+            box-shadow: 0 0 0 3px rgba(74, 100, 145, 0.1);
+        }
+
+        .hint {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        input[type="range"] {
+            height: 8px;
+            -webkit-appearance: none;
+            background: #e1e5eb;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #4a6491;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Кнопка */
+        .calculate-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto;
+            padding: 16px 30px;
+            background: linear-gradient(135deg, #4a6491, #2c3e50);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 100, 145, 0.3);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .calculate-btn i {
+            margin-right: 10px;
+        }
+
+        /* Результаты */
+        .results {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+
+        .results h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .results h3 i {
+            margin-right: 10px;
+        }
+
+        .result-text {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #4cd964;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        .result-text.highlight {
+            background-color: #e8f5e9;
+            border-left-color: #4cd964;
+        }
+
+        /* График */
+        .chart-container {
+            height: 400px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        /* Математическая формула */
+        .math-formula {
+            background-color: #f0f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 5px solid #4a6491;
+        }
+
+        .math-formula h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .math-formula code {
+            display: block;
+            background-color: white;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+
+        /* Контейнер для расходов */
+        .expenses-container {
+            margin: 30px 0;
+        }
+
+        .expense-category {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        /* Подвал */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #4cd964;
+        }
+
+        .footer-content p {
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-link {
+                padding: 15px;
+                width: 100%;
+                text-align: center;
+            }
+            
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-piggy-bank"></i> Финансовый помощник школьника</h1>
+            <p class="subtitle">Интерактивный калькулятор для планирования личного бюджета</p>
+        </div>
+    </header>
+
+    <!-- Навигация -->
+    <nav>
+        <div class="container">
+            <ul class="nav-menu">
+                <li><a href="#savings" class="nav-link active"><i class="fas fa-coins"></i> Копилка</a></li>
+                <li><a href="#compare" class="nav-link"><i class="fas fa-balance-scale"></i> Сравнение</a></li>
+                <li><a href="#invest" class="nav-link"><i class="fas fa-chart-line"></i> Инвестиции</a></li>
+                <li><a href="#budget" class="nav-link"><i class="fas fa-wallet"></i> Бюджет</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Модуль 1: Накопительная копилка -->
+        <section id="savings" class="module active-module">
+            <h2><i class="fas fa-bullseye"></i> Накопительная копилка</h2>
+            <p class="module-description">Рассчитайте, сколько времени потребуется, чтобы накопить на цель, откладывая часть карманных денег.</p>
+            
+            <div class="calculator-card">
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="goal"><i class="fas fa-flag"></i> Цель накоплений (руб.)</label>
+                        <input type="number" id="goal" min="1000" max="1000000" value="50000" placeholder="Например, 50000">
+                        <div class="hint">На что копим? (телефон, ноутбук и т.д.)</div>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="monthly"><i class="fas fa-money-bill-wave"></i> Ежемесячный доход (руб.)</label>
+                        <input type="number" id="monthly" min="100" max="50000" value="5000" placeholder="Например, 5000">
+                        <div class="hint">Карманные деньги + подработка</div>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="percent"><i class="fas fa-percentage"></i> Процент накоплений: <span id="percentValue">50</span>%</label>
+                        <input type="range" id="percent" min="10" max="90" value="50" step="5">
+                        <div class="hint">Сколько % от дохода готовы откладывать?</div>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="interest"><i class="fas fa-hand-holding-usd"></i> Годовая ставка (%)</label>
+                        <input type="number" id="interest" min="0" max="20" value="5" step="0.5">
+                        <div class="hint">Если деньги на накопительном счету</div>
+                    </div>
+                </div>
+                
+                <button class="calculate-btn" id="calculateSavingsBtn">
+                    <i class="fas fa-calculator"></i> Рассчитать
+                </button>
+                
+                <div class="results">
+                    <h3><i class="fas fa-chart-bar"></i> Результаты расчета</h3>
+                    <div id="savingsResult" class="result-text">
+                        Здесь появится результат расчета...
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="savingsChart"></canvas>
+                    </div>
+                    
+                    <div class="math-formula">
+                        <h4><i class="fas fa-square-root-alt"></i> Используемая математическая модель:</h4>
+                        <p>Формула суммы арифметической прогрессии с учетом сложного процента:</p>
+                        <code>S = P(1 + r/12)<sup>n</sup> + A[((1 + r/12)<sup>n</sup> - 1) / (r/12)]</code>
+                        <p>где P — начальный взнос, A — ежемесячный платеж, r — годовая ставка, n — количество месяцев</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Модуль 2: Сравнение вариантов -->
+        <section id="compare" class="module">
+            <h2><i class="fas fa-shopping-cart"></i> Сравнение финансовых вариантов</h2>
+            <p class="module-description">Что выгоднее: купить сейчас, в рассрочку или в кредит?</p>
+            
+            <div class="calculator-card">
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="price"><i class="fas fa-tag"></i> Стоимость товара (руб.)</label>
+                        <input type="number" id="price" min="1000" max="500000" value="40000" placeholder="Например, 40000">
+                        <div class="hint">Цена телефона, ноутбука и т.д.</div>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="discount"><i class="fas fa-percent"></i> Скидка при оплате наличными (%)</label>
+                        <input type="number" id="discount" min="0" max="50" value="15" step="1">
+                        <div class="hint">Обычно 5-20%</div>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="installmentMonths"><i class="fas fa-calendar-alt"></i> Рассрочка (месяцев)</label>
+                        <input type="number" id="installmentMonths" min="3" max="24" value="12" step="1">
+                        <div class="hint">Срок рассрочки без переплаты</div>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="creditRate"><i class="fas fa-credit-card"></i> Ставка по кредиту (%)</label>
+                        <input type="number" id="creditRate" min="5" max="50" value="20" step="0.5">
+                        <div class="hint">Годовая процентная ставка</div>
+                    </div>
+                </div>
+                
+                <button class="calculate-btn" id="calculateComparisonBtn">
+                    <i class="fas fa-balance-scale"></i> Сравнить варианты
+                </button>
+                
+                <div class="results">
+                    <h3><i class="fas fa-chart-pie"></i> Результаты сравнения</h3>
+                    <div id="comparisonResult" class="result-text">
+                        Здесь появится результат сравнения...
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Модуль 3: Инвестиции -->
+        <section id="invest" class="module">
+            <h2><i class="fas fa-seedling"></i> Первые инвестиции</h2>
+            <p class="module-description">Узнайте, как работает сложный процент на длинной дистанции.</p>
+            
+            <div class="calculator-card">
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="initialInvestment"><i class="fas fa-gift"></i> Начальная сумма (руб.)</label>
+                        <input type="number" id="initialInvestment" min="1000" max="1000000" value="10000" placeholder="Например, 10000">
+                        <div class="hint">Подарок на день рождения или первые накопления</div>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="monthlyInvestment"><i class="fas fa-calendar-plus"></i> Ежемесячное пополнение (руб.)</label>
+                        <input type="number" id="monthlyInvestment" min="0" max="50000" value="2000" placeholder="Например, 2000">
+                        <div class="hint">Сколько сможете добавлять каждый месяц</div>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="investmentYears"><i class="fas fa-hourglass-half"></i> Срок инвестирования (лет)</label>
+                        <input type="number" id="investmentYears" min="1" max="40" value="10" step="1">
+                        <div class="hint">Чем больше срок, тем сильнее эффект сложного процента</div>
+                    </div>
+                    
+                    <div class="input-field">
+                        <label for="investmentRate"><i class="fas fa-line-chart"></i> Ожидаемая доходность (% годовых)</label>
+                        <input type="number" id="investmentRate" min="1" max="20" value="8" step="0.5">
+                        <div class="hint">Средняя доходность на фондовом рынке 7-10%</div>
+                    </div>
+                </div>
+                
+                <button class="calculate-btn" id="calculateInvestmentBtn">
+                    <i class="fas fa-seedling"></i> Рассчитать рост
+                </button>
+                
+                <div class="results">
+                    <h3><i class="fas fa-rocket"></i> Результаты инвестирования</h3>
+                    <div id="investmentResult" class="result-text">
+                        Здесь появится результат расчета инвестиций...
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="investmentChart"></canvas>
+                    </div>
+                    
+                    <div class="math-formula">
+                        <h4><i class="fas fa-square-root-alt"></i> Используемая математическая модель:</h4>
+                        <p>Формула сложного процента с регулярными пополнениями:</p>
+                        <code>FV = P(1 + r)<sup>n</sup> + PMT × [(1 + r)<sup>n</sup> - 1] / r</code>
+                        <p>где FV — будущая стоимость, P — начальная сумма, PMT — регулярный платеж, r — месячная ставка, n — количество периодов</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Модуль 4: Бюджет -->
+        <section id="budget" class="module">
+            <h2><i class="fas fa-chart-pie"></i> Учет расходов</h2>
+            <p class="module-description">Проанализируйте, на что уходят ваши карманные деньги.</p>
+            
+            <div class="calculator-card">
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="income"><i class="fas fa-money-check-alt"></i> Ежемесячный доход (руб.)</label>
+                        <input type="number" id="income" min="1000" max="50000" value="8000" placeholder="Например, 8000">
+                        <div class="hint">Общая сумма карманных денег и подработки</div>
+                    </div>
+                </div>
+                
+                <div class="expenses-container">
+                    <h3><i class="fas fa-list-alt"></i> Распределение расходов</h3>
+                    
+                    <div class="expense-category">
+                        <div class="input-field">
+                            <label for="food"><i class="fas fa-utensils"></i> Еда и напитки: <span id="foodPercent">30</span>%</label>
+                            <input type="range" id="food" min="0" max="100" value="30">
+                            <span class="hint" id="foodValue">30% (2400 руб.)</span>
+                        </div>
+                        
+                        <div class="input-field">
+                            <label for="entertainment"><i class="fas fa-gamepad"></i> Развлечения: <span id="entertainmentPercent">25</span>%</label>
+                            <input type="range" id="entertainment" min="0" max="100" value="25">
+                            <span class="hint" id="entertainmentValue">25% (2000 руб.)</span>
+                        </div>
+                        
+                        <div class="input-field">
+                            <label for="transport"><i class="fas fa-bus"></i> Транспорт: <span id="transportPercent">15</span>%</label>
+                            <input type="range" id="transport" min="0" max="100" value="15">
+                            <span class="hint" id="transportValue">15% (1200 руб.)</span>
+                        </div>
+                        
+                        <div class="input-field">
+                            <label for="communications"><i class="fas fa-mobile-alt"></i> Связь и интернет: <span id="communicationsPercent">10</span>%</label>
+                            <input type="range" id="communications" min="0" max="100" value="10">
+                            <span class="hint" id="communicationsValue">10% (800 руб.)</span>
+                        </div>
+                        
+                        <div class="input-field">
+                            <label for="savingsBudget"><i class="fas fa-piggy-bank"></i> Накопления: <span id="savingsBudgetPercent">20</span>%</label>
+                            <input type="range" id="savingsBudget" min="0" max="100" value="20">
+                            <span class="hint" id="savingsBudgetValue">20% (1600 руб.)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="results">
+                    <h3><i class="fas fa-chart-pie"></i> Визуализация бюджета</h3>
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                    
+                    <div id="budgetAnalysis" class="result-text">
+                        <p><i class="fas fa-lightbulb"></i> <strong>Рекомендация:</strong> Старайтесь откладывать не менее 20% дохода. Если тратите на еду более 40%, пересмотрите свои привычки.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Подвал -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="project-info">
+                    <h3>Проектная работа по математике</h3>
+                    <p>10 класс • Тема: «Математика в повседневной жизни: от магазина до кредита»</p>
+                    <p>Используемые темы: прогрессии, проценты, функции, графики, статистика</p>
+                </div>
+                <div class="team-info">
+                    <h3>Команда разработки</h3>
+                    <p>Лебедев Сергей</p>
+                    <p>Учитель: [Фамилия И.О.]</p>
+                    <p>2024 год</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2024 Финансовый помощник школьника • Все расчеты носят ознакомительный характер</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Глобальные переменные для хранения экземпляров графиков
+        let savingsChartInstance = null;
+        let comparisonChartInstance = null;
+        let investmentChartInstance = null;
+        let budgetChartInstance = null;
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Настройка слайдера процентов для модуля 1
+            const percentSlider = document.getElementById('percent');
+            const percentValue = document.getElementById('percentValue');
+            
+            percentSlider.addEventListener('input', function() {
+                percentValue.textContent = this.value;
+            });
+            
+            // Навигация по модулям
+            const navLinks = document.querySelectorAll('.nav-link');
+            const modules = document.querySelectorAll('.module');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Удаляем активный класс у всех ссылок
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    // Добавляем активный класс текущей ссылке
+                    this.classList.add('active');
+                    
+                    // Скрываем все модули
+                    modules.forEach(module => {
+                        module.classList.remove('active-module');
+                    });
+                    
+                    // Показываем выбранный модуль
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active-module');
+                    
+                    // Обновляем графики при переключении
+                    if (targetId === 'budget') {
+                        updateBudgetChart();
+                    }
+                });
+            });
+            
+            // Инициализация слайдеров бюджета
+            initBudgetSliders();
+            
+            // Назначаем обработчики для кнопок
+            document.getElementById('calculateSavingsBtn').addEventListener('click', calculateSavings);
+            document.getElementById('calculateComparisonBtn').addEventListener('click', calculateComparison);
+            document.getElementById('calculateInvestmentBtn').addEventListener('click', calculateInvestment);
+            
+            // Автоматический расчет при загрузке
+            calculateSavings();
+            updateBudgetChart();
+        });
+        
+        // Функция для инициализации слайдеров бюджета
+        function initBudgetSliders() {
+            const incomeInput = document.getElementById('income');
+            const sliders = ['food', 'entertainment', 'transport', 'communications', 'savingsBudget'];
+            
+            // Функция обновления значений слайдеров
+            function updateBudgetValues() {
+                const income = parseFloat(incomeInput.value) || 8000;
+                let totalPercent = 0;
+                
+                // Обновляем проценты и значения в рублях
+                sliders.forEach(sliderId => {
+                    const slider = document.getElementById(sliderId);
+                    const percent = parseFloat(slider.value);
+                    const percentElement = document.getElementById(sliderId + 'Percent');
+                    const valueElement = document.getElementById(sliderId + 'Value');
+                    
+                    if (percentElement) percentElement.textContent = percent;
+                    
+                    const rubles = (income * percent / 100).toFixed(0);
+                    if (valueElement) valueElement.textContent = `${percent}% (${rubles} руб.)`;
+                    
+                    totalPercent += percent;
+                });
+                
+                // Проверка, что сумма = 100%
+                if (totalPercent !== 100) {
+                    document.getElementById('budgetAnalysis').innerHTML = 
+                        `<p style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> 
+                        <strong>Внимание:</strong> Сумма процентов должна равняться 100%. Сейчас: ${totalPercent}%</p>`;
+                } else {
+                    document.getElementById('budgetAnalysis').innerHTML = 
+                        `<p><i class="fas fa-lightbulb"></i> 
+                        <strong>Рекомендация:</strong> Старайтесь откладывать не менее 20% дохода. 
+                        Если тратите на еду более 40%, пересмотрите свои привычки.</p>`;
+                }
+            }
+            
+            // Назначаем обработчики для слайдеров и поля дохода
+            sliders.forEach(sliderId => {
+                document.getElementById(sliderId).addEventListener('input', updateBudgetValues);
+            });
+            
+            incomeInput.addEventListener('input', updateBudgetValues);
+            
+            // Инициализируем значения
+            updateBudgetValues();
+        }
+        
+        // Функция для расчета накоплений (Модуль 1)
+        function calculateSavings() {
+            // Получаем значения из полей ввода
+            const goal = parseFloat(document.getElementById('goal').value);
+            const monthlyIncome = parseFloat(document.getElementById('monthly').value);
+            const percent = parseFloat(document.getElementById('percent').value);
+            const annualRate = parseFloat(document.getElementById('interest').value);
+            
+            // Проверка ввода
+            if (!goal || !monthlyIncome || goal <= 0 || monthlyIncome <= 0) {
+                document.getElementById('savingsResult').innerHTML = 
+                    '<p style="color: red;"><i class="fas fa-exclamation-circle"></i> Пожалуйста, заполните все поля корректно (положительные числа)</p>';
+                return;
+            }
+            
+            // Расчеты
+            const monthlySavings = monthlyIncome * (percent / 100);
+            const monthlyRate = annualRate / 12 / 100;
+            
+            // Расчет с учетом сложного процента
+            let months = 0;
+            let total = 0;
+            const data = [];
+            const labels = [];
+            
+            while (total < goal && months < 600) { // Максимум 50 лет
+                months++;
+                if (annualRate > 0) {
+                    // С учетом процентов
+                    total = total * (1 + monthlyRate) + monthlySavings;
+                } else {
+                    // Без процентов
+                    total += monthlySavings;
+                }
+                
+                // Сохраняем данные для графика
+                if (months % 3 === 0 || total >= goal || months <= 12) {
+                    labels.push(`Месяц ${months}`);
+                    data.push(Math.min(total, goal));
+                }
+                
+                if (total >= goal) break;
+            }
+            
+            const years = (months / 12).toFixed(1);
+            
+            // Формируем результат
+            let resultHTML = `
+                <div class="highlight">
+                    <p><i class="fas fa-bullseye"></i> <strong>Цель:</strong> ${goal.toLocaleString('ru-RU')} руб.</p>
+                    <p><i class="fas fa-calendar-alt"></i> <strong>Время достижения:</strong> ${months} месяцев (${years} лет)</p>
+                    <p><i class="fas fa-money-bill-wave"></i> <strong>Ежемесячные накопления:</strong> ${monthlySavings.toFixed(0).toLocaleString('ru-RU')} руб.</p>
+                    <p><i class="fas fa-percentage"></i> <strong>Процент от дохода:</strong> ${percent}%</p>
+            `;
+            
+            if (annualRate > 0) {
+                const totalWithInterest = total;
+                const interestEarned = totalWithInterest - (monthlySavings * months);
+                resultHTML += `<p><i class="fas fa-chart-line"></i> <strong>Проценты заработаны:</strong> ${interestEarned.toFixed(0).toLocaleString('ru-RU')} руб.</p>`;
+            }
+            
+            resultHTML += `</div>`;
+            
+            if (months >= 600) {
+                resultHTML += `<p style="color: #e74c3c; margin-top: 10px;">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    <strong>Внимание:</strong> При текущих условиях цель может быть не достигнута в разумные сроки. 
+                    Рекомендуется увеличить процент накоплений или найти дополнительные источники дохода.
+                </p>`;
+            } else {
+                const fasterMonths = Math.max(Math.floor(months * 0.8), 1);
+                resultHTML += `<p style="color: #27ae60; margin-top: 10px;">
+                    <i class="fas fa-lightbulb"></i> 
+                    <strong>Совет:</strong> Если увеличить накопления до ${Math.min(percent + 15, 90)}%, 
+                    цель будет достигнута за ${fasterMonths} месяцев.
+                </p>`;
+            }
+            
+            document.getElementById('savingsResult').innerHTML = resultHTML;
+            
+            // Строим график
+            const ctx = document.getElementById('savingsChart').getContext('2d');
+            
+            // Уничтожаем старый график, если он существует
+            if (savingsChartInstance) {
+                savingsChartInstance.destroy();
+            }
+            
+            savingsChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Накопленная сумма',
+                        data: data,
+                        borderColor: '#4a6491',
+                        backgroundColor: 'rgba(74, 100, 145, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.2
+                    }, {
+                        label: 'Цель',
+                        data: Array(labels.length).fill(goal),
+                        borderColor: '#4cd964',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Динамика накоплений'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw.toLocaleString('ru-RU')} руб.`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Сумма (руб.)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('ru-RU') + ' руб.';
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Время (месяцы)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Функция для сравнения вариантов (Модуль 2)
+        function calculateComparison() {
+            const price = parseFloat(document.getElementById('price').value);
+            const discount = parseFloat(document.getElementById('discount').value);
+            const installmentMonths = parseFloat(document.getElementById('installmentMonths').value);
+            const creditRate = parseFloat(document.getElementById('creditRate').value);
+            
+            // Проверка ввода
+            if (!price || price <= 0) {
+                document.getElementById('comparisonResult').innerHTML = 
+                    '<p style="color: red;"><i class="fas fa-exclamation-circle"></i> Введите корректную стоимость товара</p>';
+                return;
+            }
+            
+            // Вариант 1: Наличные со скидкой
+            const cashPrice = price * (1 - discount / 100);
+            const cashSavings = price - cashPrice;
+            
+            // Вариант 2: Рассрочка (без переплаты, но с первоначальным взносом 10%)
+            const initialPayment = price * 0.1;
+            const monthlyInstallment = (price - initialPayment) / installmentMonths;
+            const totalInstallment = price; // Без переплаты
+            
+            // Вариант 3: Кредит (аннуитетный платеж)
+            const monthlyCreditRate = creditRate / 12 / 100;
+            const creditMonths = installmentMonths;
+            const annuityCoefficient = monthlyCreditRate * Math.pow(1 + monthlyCreditRate, creditMonths) / 
+                                     (Math.pow(1 + monthlyCreditRate, creditMonths) - 1);
+            const monthlyCreditPayment = price * annuityCoefficient;
+            const totalCredit = monthlyCreditPayment * creditMonths;
+            const creditOverpayment = totalCredit - price;
+            
+            // Формируем результат
+            let resultHTML = `
+                <div class="highlight">
+                    <h4>Сравнение трех вариантов покупки за ${price.toLocaleString('ru-RU')} руб.:</h4>
+                    
+                    <p><i class="fas fa-money-bill-wave" style="color: #27ae60;"></i> 
+                    <strong>1. Наличные со скидкой ${discount}%:</strong> 
+                    <br>→ Итоговая сумма: <strong>${cashPrice.toLocaleString('ru-RU')} руб.</strong>
+                    <br>→ Экономия: ${cashSavings.toLocaleString('ru-RU')} руб.
+                    <br>→ Ежемесячный платеж: ${cashPrice.toLocaleString('ru-RU')} руб. (единоразово)</p>
+                    
+                    <p><i class="fas fa-calendar-alt" style="color: #3498db;"></i> 
+                    <strong>2. Рассрочка на ${installmentMonths} месяцев:</strong>
+                    <br>→ Первый взнос: ${initialPayment.toLocaleString('ru-RU')} руб.
+                    <br>→ Ежемесячный платеж: ${monthlyInstallment.toLocaleString('ru-RU')} руб.
+                    <br>→ Итого: ${totalInstallment.toLocaleString('ru-RU')} руб.
+                    <br>→ Переплата: 0 руб.</p>
+                    
+                    <p><i class="fas fa-credit-card" style="color: #e74c3c;"></i> 
+                    <strong>3. Кредит под ${creditRate}% годовых:</strong>
+                    <br>→ Ежемесячный платеж: ${monthlyCreditPayment.toLocaleString('ru-RU')} руб.
+                    <br>→ Итого: ${totalCredit.toLocaleString('ru-RU')} руб.
+                    <br>→ Переплата: ${creditOverpayment.toLocaleString('ru-RU')} руб.</p>
+                    
+                    <hr style="margin: 15px 0;">
+                    
+                    <p><i class="fas fa-trophy" style="color: #f39c12;"></i> 
+                    <strong>Самый выгодный вариант:</strong> `;
+            
+            if (cashPrice <= totalInstallment && cashPrice <= totalCredit) {
+                resultHTML += `Наличные со скидкой (экономия ${cashSavings.toLocaleString('ru-RU')} руб.)`;
+            } else if (totalInstallment <= totalCredit) {
+                resultHTML += `Рассрочка (дешевле кредита на ${creditOverpayment.toLocaleString('ru-RU')} руб.)`;
+            } else {
+                resultHTML += `Кредит (но лучше рассмотреть другие варианты)`;
+            }
+            
+            resultHTML += `</p></div>`;
+            
+            document.getElementById('comparisonResult').innerHTML = resultHTML;
+            
+            // Строим график сравнения
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            
+            if (comparisonChartInstance) {
+                comparisonChartInstance.destroy();
+            }
+            
+            comparisonChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Наличные со скидкой', 'Рассрочка', 'Кредит'],
+                    datasets: [{
+                        label: 'Итоговая сумма (руб.)',
+                        data: [cashPrice, totalInstallment, totalCredit],
+                        backgroundColor: [
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(52, 152, 219, 0.7)',
+                            'rgba(231, 76, 60, 0.7)'
+                        ],
+                        borderColor: [
+                            '#27ae60',
+                            '#3498db',
+                            '#e74c3c'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Сравнение итоговых сумм по вариантам оплаты'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw.toLocaleString('ru-RU')} руб.`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Сумма (руб.)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('ru-RU') + ' руб.';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Функция для расчета инвестиций (Модуль 3)
+        function calculateInvestment() {
+            const initial = parseFloat(document.getElementById('initialInvestment').value);
+            const monthly = parseFloat(document.getElementById('monthlyInvestment').value);
+            const years = parseFloat(document.getElementById('investmentYears').value);
+            const annualRate = parseFloat(document.getElementById('investmentRate').value);
+            
+            // Проверка ввода
+            if ((!initial && !monthly) || !years || years <= 0) {
+                document.getElementById('investmentResult').innerHTML = 
+                    '<p style="color: red;"><i class="fas fa-exclamation-circle"></i> Заполните поля: начальная сумма или ежемесячное пополнение, и срок</p>';
+                return;
+            }
+            
+            // Расчеты
+            const months = years * 12;
+            const monthlyRate = annualRate / 12 / 100;
+            
+            // Расчет будущей стоимости
+            let futureValue;
+            if (monthlyRate > 0) {
+                // Формула сложного процента с регулярными пополнениями
+                futureValue = initial * Math.pow(1 + monthlyRate, months) +
+                            monthly * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
+            } else {
+                // Без процентов
+                futureValue = initial + monthly * months;
+            }
+            
+            // Расчет суммы вложений
+            const totalInvested = initial + monthly * months;
+            const profit = futureValue - totalInvested;
+            const profitPercentage = totalInvested > 0 ? (profit / totalInvested * 100).toFixed(1) : 0;
+            
+            // Подготовка данных для графика
+            const labels = [];
+            const investedData = [];
+            const valueData = [];
+            
+            for (let year = 1; year <= years; year++) {
+                const monthCount = year * 12;
+                let yearValue;
+                
+                if (monthlyRate > 0) {
+                    yearValue = initial * Math.pow(1 + monthlyRate, monthCount) +
+                              monthly * (Math.pow(1 + monthlyRate, monthCount) - 1) / monthlyRate;
+                } else {
+                    yearValue = initial + monthly * monthCount;
+                }
+                
+                const yearInvested = initial + monthly * monthCount;
+                
+                labels.push(`Год ${year}`);
+                investedData.push(yearInvested);
+                valueData.push(yearValue);
+            }
+            
+            // Формируем результат
+            const resultHTML = `
+                <div class="highlight">
+                    <p><i class="fas fa-seedling"></i> <strong>Начальные условия:</strong></p>
+                    <p>→ Начальная сумма: ${initial.toLocaleString('ru-RU')} руб.</p>
+                    <p>→ Ежемесячное пополнение: ${monthly.toLocaleString('ru-RU')} руб.</p>
+                    <p>→ Срок: ${years} лет (${months} месяцев)</p>
+                    <p>→ Доходность: ${annualRate}% годовых</p>
+                    
+                    <hr style="margin: 15px 0;">
+                    
+                    <p><i class="fas fa-chart-line"></i> <strong>Результаты через ${years} лет:</strong></p>
+                    <p>→ Всего вложено: ${totalInvested.toLocaleString('ru-RU')} руб.</p>
+                    <p>→ Будущая стоимость: <strong>${futureValue.toLocaleString('ru-RU')} руб.</strong></p>
+                    <p>→ Прибыль: ${profit.toLocaleString('ru-RU')} руб. (${profitPercentage}%)</p>
+                    
+                    <hr style="margin: 15px 0;">
+                    
+                    <p><i class="fas fa-lightbulb"></i> <strong>Вывод:</strong> 
+                    ${profit > 0 ? 
+                        `Сложный процент принесет вам дополнительно ${profit.toLocaleString('ru-RU')} руб.` : 
+                        `При нулевой доходности вы просто сохраните свои деньги.`}
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('investmentResult').innerHTML = resultHTML;
+            
+            // Строим график
+            const ctx = document.getElementById('investmentChart').getContext('2d');
+            
+            if (investmentChartInstance) {
+                investmentChartInstance.destroy();
+            }
+            
+            investmentChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Сумма вложений',
+                        data: investedData,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false
+                    }, {
+                        label: 'Стоимость с учетом сложного процента',
+                        data: valueData,
+                        borderColor: '#9b59b6',
+                        backgroundColor: 'rgba(155, 89, 182, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Рост инвестиций с течением времени'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw.toLocaleString('ru-RU')} руб.`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Сумма (руб.)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('ru-RU') + ' руб.';
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Годы'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Функция для обновления графика бюджета (Модуль 4)
+        function updateBudgetChart() {
+            const income = parseFloat(document.getElementById('income').value) || 8000;
+            
+            // Получаем значения слайдеров
+            const foodPercent = parseFloat(document.getElementById('food').value);
+            const entertainmentPercent = parseFloat(document.getElementById('entertainment').value);
+            const transportPercent = parseFloat(document.getElementById('transport').value);
+            const communicationsPercent = parseFloat(document.getElementById('communications').value);
+            const savingsPercent = parseFloat(document.getElementById('savingsBudget').value);
+            
+            // Рассчитываем суммы в рублях
+            const categories = [
+                { name: 'Еда и напитки', percent: foodPercent, color: '#e74c3c' },
+                { name: 'Развлечения', percent: entertainmentPercent, color: '#3498db' },
+                { name: 'Транспорт', percent: transportPercent, color: '#f39c12' },
+                { name: 'Связь и интернет', percent: communicationsPercent, color: '#9b59b6' },
+                { name: 'Накопления', percent: savingsPercent, color: '#27ae60' }
+            ];
+            
+            const data = categories.map(cat => (income * cat.percent / 100));
+            const labels = categories.map(cat => `${cat.name} (${cat.percent}%)`);
+            const colors = categories.map(cat => cat.color);
+            
+            // Строим график
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            
+            if (budgetChartInstance) {
+                budgetChartInstance.destroy();
+            }
+            
+            budgetChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: 'white',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Распределение бюджета (${income.toLocaleString('ru-RU')} руб./мес.)`
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const percent = ((value / income) * 100).toFixed(1);
+                                    return `${label}: ${value.toLocaleString('ru-RU')} руб. (${percent}%)`;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
